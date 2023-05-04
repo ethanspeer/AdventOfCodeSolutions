@@ -124,11 +124,14 @@ def main():
             case _:
                 pass
 
-    def execute_instructions():
+    def execute_instructions(skipme):
         for instr in instructions:
                 end_wire = lookup_wire(instr.wire)
                 if end_wire.number != None:
                     continue
+                if skipme == True:
+                    if end_wire.name == "b":
+                        continue
                 do_operation(instr.operation, instr.left_signal, instr.right_signal, instr.wire)
 
 
@@ -136,11 +139,32 @@ def main():
 
     found = False
     while(found == False):
-        execute_instructions()
+        execute_instructions(False)
         for wire in wires:
             if wire.name == "a" and wire.number != None:
                 found = True
 
+    answer = 0
+    for wire in wires:
+        if wire.name == "a":
+            answer = wire.number
+            break
+    
+    for wire in wires:
+        wire.number = None
+    
+    for wire in wires:
+        if wire.name == "b":
+            wire.number = answer
+            break
+    
+    found = False
+    while(found == False):
+        execute_instructions(True)
+        for wire in wires:
+            if wire.name == "a" and wire.number != None:
+                found = True
+    
     for wire in wires:
         if wire.name == "a":
             print("Answer:", wire.number)
